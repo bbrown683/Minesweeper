@@ -1,9 +1,13 @@
+// Author: Benjamin Brown
+// Filename: GameBoard.java
+// Project 1
+// Purpose: Contains logic for performing game actions such as marking a tile.
+
 import java.util.Random;
 
 public class GameBoard 
 {
 	private Tile[][] tiles;
-	private int[][] adjacent;
 	
 	private int width, height;
 	private int mineCount;
@@ -14,10 +18,6 @@ public class GameBoard
 		this.height = height;
 		
 		tiles = initTiles();
-		
-		// Copy size of tile array, but add a border full of zeros
-		// to prevent ArrayIndexOutOfBounds exception.
-		adjacent = new int[width + 1][height + 1];
 	}
 	
 	private Tile[][] initTiles()
@@ -48,7 +48,7 @@ public class GameBoard
 			randomPositionX = ((int)random.nextInt(tiles.length - 1));
 			randomPositionY = ((int)random.nextInt(tiles[0].length - 1));
 			
-			//System.out.println(randomPositionX + " : " + randomPositionY);
+			//System.out.println(randomPositionX + ", " + randomPositionY);
 			
 			if(!tiles[randomPositionX][randomPositionY].getContainsMine())
 			{		
@@ -62,36 +62,40 @@ public class GameBoard
 	
 	public void adjacentMinesPerTile()
 	{	
-		for(int i = 1; i <= width; i++)
+		for(int i = 0; i < width; i++)
 		{
-			for(int j = 1; j <= height; j++)
+			for(int j = 0; j < height; j++)
 			{
 				int adjacentMines = 0;
 				
 				if(!tiles[i][j].getContainsMine())
 				{
+					/*
+					 * Tests to ensure if the i and j are within boundaries in the array.
+					 */
+					
 					// 4 Sides
-					if(tiles[i + 1][j].getContainsMine())
+					if(i + 1 < width && tiles[i + 1][j].getContainsMine())
 						adjacentMines++;
-					if(tiles[i - 1][j].getContainsMine())
+					if(i - 1 > -1 && tiles[i - 1][j].getContainsMine())
 						adjacentMines++;
-					if(tiles[i][j - 1].getContainsMine())
+					if(j - 1 > -1 && tiles[i][j - 1].getContainsMine())
 						adjacentMines++;
-					if(tiles[i][j + 1].getContainsMine())
+					if(j + 1 < height && tiles[i][j + 1].getContainsMine())
 						adjacentMines++;
 					
 					// 4 Corners
-					if(tiles[i - 1][j + 1].getContainsMine())
+					if((i - 1 > -1 && j + 1 < height) && tiles[i - 1][j + 1].getContainsMine())
 						adjacentMines++;
-					if(tiles[i - 1][j - 1].getContainsMine())
+					if((i - 1 > -1 && j - 1 > -1) && tiles[i - 1][j - 1].getContainsMine())
 						adjacentMines++;
-					if(tiles[i + 1][j + 1].getContainsMine())
+					if((i + 1 < width && j + 1 < height) && tiles[i + 1][j + 1].getContainsMine())
 						adjacentMines++;
-					if(tiles[i + 1][j - 1].getContainsMine())
+					if((i + 1 < width && j - 1 > -1)&& tiles[i + 1][j - 1].getContainsMine())
 						adjacentMines++;
 				}
 				
-				tiles[i-1][j-1].setAdjacentMines(adjacentMines);
+				tiles[i][j].setAdjacentMines(adjacentMines);
 			}
 		}
 	}
@@ -141,15 +145,15 @@ public class GameBoard
 			// If covered, but not marked, we can uncover the tile.
 			if(tiles[x][y].getIsCovered() && !tiles[x][y].getIsMarked())
 			{
-				// System.out.println("Uncovering " + x + " : " + y);
+				//System.out.println("Uncovering " + x + " : " + y);
 				
 				tiles[x][y].setIsCovered(false);
 			}
 		}
 	}
 	
-	// Tests if all tiles with mines are  marked,
-	// and all tiles without mines are uncovered.
+	// Tests if all tiles with mines are  marked,
+	// and all tiles without mines are uncovered.
 	public boolean win()
 	{
 		int markedCount = 0;
@@ -176,7 +180,7 @@ public class GameBoard
 		return false;
 	}
 	
-	// Any tile with a mine is uncovered  
+	// Any tile with a mine is uncovered  
 	public boolean lose(int x, int y)
 	{
 		if(tiles[x][y].getContainsMine() && !tiles[x][y].getIsCovered())
@@ -188,30 +192,55 @@ public class GameBoard
 	public boolean gameOver(int x, int y)
 	{
 		if(win() || lose(x, y))
+		{
+			if(win())
+				System.out.println("You win!");
+			else
+				System.out.println("You lose!");
+		
+			
+			System.out.println("Game Over.");
 			return true;
-
+		}
 		return false;
 	}
 	
 	public String cheatSheet()
 	{
-		String gameBoard = "";
+		String cheatSheet = "";
+		
 		for(int i = 0; i < width; i++)
 		{
 			for(int j = 0; j < height; j++)
 			{
 				if(j == tiles.length - 1)
 				{
-					gameBoard += tiles[i][j].getContainsMine() + "\n";
+					if(tiles[i][j].getContainsMine())
+					{
+						// Show mines with an asterisk.
+						cheatSheet += "*\n";
+					}
+					else
+					{
+						cheatSheet += tiles[i][j].toString() + "\n";
+					}
 				}
 				else
 				{
-					gameBoard += tiles[i][j].getContainsMine() + "  ";
+					if(tiles[i][j].getContainsMine())
+					{
+						// Show mines with an asterisk.
+						cheatSheet += "*  ";
+					}
+					else
+					{
+						cheatSheet += tiles[i][j].toString() + "  ";
+					}
 				}
 			}
 		}
 		
-		return gameBoard;
+		return cheatSheet;
 	}
 	
 	public String toString()
@@ -223,11 +252,11 @@ public class GameBoard
 			{
 				if(j == tiles.length - 1)
 				{
-					gameBoard += tiles[i][j].getAdjacentMines() + "\n";
+					gameBoard += tiles[i][j].toString() + "\n";
 				}
 				else
 				{
-					gameBoard += tiles[i][j].getAdjacentMines() + "  ";
+					gameBoard += tiles[i][j].toString() + "  ";
 				}
 			}
 		}

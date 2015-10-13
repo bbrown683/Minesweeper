@@ -1,3 +1,8 @@
+// Author: Benjamin Brown
+// GameClient.java
+// Project 1
+// Purpose: Manages input and calls GameBoard methods acting as the client.
+
 import java.util.Scanner;
 
 public class GameClient 
@@ -19,6 +24,10 @@ public class GameClient
 		System.out.println("===================================");
 		System.out.println("Console Minesweeper by Ben Brown");
 		System.out.println("Project 1: COMP2150");
+		System.out.println("\n? - Covered tile\n"
+				+ "_ - Uncovered tile with no neightboring mines\n"
+				+ "# - Any number of nearby neighboring mines\n"
+				+ "! - Marked tile by player.");
 		System.out.println("===================================");
 		
 		// Initialize gameBoard with user input.
@@ -34,9 +43,6 @@ public class GameClient
 			
 			oneFourth = (int)(0.25f * width * height);
 			
-			int z = 1;
-			z = 2;
-			
 		} while((width > 20 || height > 20) || // Size cannot exceed 20x20
 				(width < 4 || height < 4) || // Size cannot be below 4x4
 				(numberOfMines > oneFourth)); // Number of mines cannot exceed 1/4 of size
@@ -44,7 +50,10 @@ public class GameClient
 		// Game initialization
 		gameBoard = new GameBoard(width, height);
 		gameBoard.distributeMines(numberOfMines);
-		//gameBoard.adjacentMinesPerTile();
+		gameBoard.adjacentMinesPerTile();
+		
+		// Uncomment to see answer before you input.
+		// System.out.print(gameBoard.cheatSheet());
 		
 		do
 		{
@@ -54,10 +63,11 @@ public class GameClient
 			System.out.println("===================================");
 		
 			
-			System.out.println("Input 'm' to mark or 'u' uncover a tile. Enter value of 0 to width - 1 or height - 1 for X-Position and Y-Position.");
+			System.out.println("Input 'm' to mark or 'u' to uncover a tile.\n"
+					+ "Enter a value of 0 to width - 1(X-Position) or height - 1(Y-Position).");
 			
 			// Input Handling
-			userInput = scanner.next().trim().charAt(0);
+			userInput = scanner.next().trim().toLowerCase().charAt(0);
 			
 			System.out.print("X-Position: ");
 			x = scanner.nextInt();
@@ -79,11 +89,9 @@ public class GameClient
 			}
 		} while(!gameBoard.gameOver(x, y));
 		
-		System.out.println("\nGame Over!");
-		
-		// Print out the actual gameBoard with true or false 
-		// values based on if it contained a mine or not.
-		System.out.println(gameBoard.cheatSheet());
+		System.out.println("===================================");
+		System.out.print(gameBoard.cheatSheet());
+		System.out.println("===================================");
 		
 		// Prevent memory leaks by closing.
 		scanner.close();

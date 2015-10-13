@@ -1,3 +1,8 @@
+// Author: Benjamin Brown
+// Filename: Tile.java
+// Project 1
+// Purpose: Implementation of a basic tile object that has conditionals used by the GameBoard object.
+
 public class Tile 
 {
 	private boolean isCovered;
@@ -67,12 +72,12 @@ public class Tile
 	{
 		if(isMarked)
 		{
-			// Mines that are marked.
+			// Tiles that are marked.
 			return "!";
 		}
 		else if(isCovered)
 		{
-			// Covered mines.
+			// Covered tile.
 			return "?";
 		}
 		else if (adjacentMines > 0)
